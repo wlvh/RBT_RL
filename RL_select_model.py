@@ -74,8 +74,13 @@ def setup_logging(log_file: str = 'rl_trading.log', level: int = logging.INFO):
     logger.addHandler(file_handler)
     logger.addHandler(console_handler)
     
-# 错误处理装饰器
+# 错误处理装饰器 - 简洁的错误处理
 def error_handler(func: Callable) -> Callable:
+    """
+    统一的错误处理装饰器
+    - 记录错误信息和堆栈跟踪
+    - 保持异常传播，不隐藏错误
+    """
     @wraps(func)
     def wrapper(*args, **kwargs) -> Any:
         try:
@@ -84,7 +89,7 @@ def error_handler(func: Callable) -> Callable:
             logger = logging.getLogger(func.__module__)
             logger.error(f"Error in {func.__name__}: {str(e)}")
             logger.error(traceback.format_exc())
-            raise
+            raise  # 快速失败，不隐藏错误
     return wrapper
 
 setup_logging()
@@ -1099,6 +1104,20 @@ class LossGradientCallback(BaseCallback):
 
 def train_model(strategies_data: pd.DataFrame, market_data: pd.DataFrame, end_date: str, weeks: int, 
                 feature_extractor: str = 'cnn', adv_param: list = [0,0]):
+    """
+    训练强化学习模型进行策略分类
+    
+    参数:
+    strategies_data: 策略数据DataFrame
+    market_data: 市场数据DataFrame  
+    end_date: 训练结束日期
+    weeks: 训练周数
+    feature_extractor: 特征提取器类型 ('cnn', 'autoencoder', 'vae')
+    adv_param: 对抗训练参数 [epsilon, alpha]，[0,0]表示不使用对抗训练
+    
+    返回:
+    model: 训练好的PPO模型
+    """
     start_date = (datetime.strptime(end_date, '%Y-%m-%d') - timedelta(weeks=weeks) - timedelta(days=30)).strftime('%Y-%m-%d')
     #market_data = load_market_data(start_date=start_date, end_date=end_date, file=market_data)
     market_data = load_market_data(start_date=start_date, end_date=end_date, file=adjust_market_data)

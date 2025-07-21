@@ -6,7 +6,10 @@ Date: 2024-08-14 07:26:31
 LastEditors: wlvh 124321452@qq.com
 LastEditTime: 2024-08-21 07:20:05
 FilePath: /trading/RL_selector/future_data_collector.py
-Description: 
+Description: 专注于期货数据收集和处理的模块
+- 单一职责：只负责数据收集，不涉及模型训练
+- 健壮的错误处理和重试机制
+- 支持并发下载和增量更新
 Copyright (c) 2024 by ${124321452@qq.com}, All Rights Reserved. 
 '''
 import requests

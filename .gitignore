@@ -1,0 +1,30 @@
+# 排除 RL_selector 文件夹
+RL_selector/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# 临时文件
+*.tmp
+*.bak
+*.cache

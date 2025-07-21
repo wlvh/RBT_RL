@@ -44,12 +44,18 @@ def rolling_window_standardize(df, bool_columns, abs_mean_larger10, window_size=
     # 初始化结果字典
     result_dict = {col: df[col] for col in df.columns}
     
-    # 使用前向和后向填充来填充NaN值,会有轻微的未来数据
-    numeric_df = df[numeric_columns].ffill().bfill()
+    # 使用前一天的数据填充当前缺失值（仅对数值列）
+    # 注意：仅使用前向填充，避免使用未来数据
+    numeric_df = df[numeric_columns].fillna(method='ffill')
+    
+    # 计算对数收益率（仅对数值列），处理无效值和零值
+    epsilon = 1e-10  # 避免 log(0) 错误
     
     def signed_log(x):
-        return np.sign(x) * np.log(np.abs(x) + 1)
-    # 计算对数收益率，处理负值
+        """处理可能的负值的对数变换"""
+        return np.sign(x) * np.log(np.abs(x) + epsilon)
+    
+    # 使用 signed_log 处理可能的负值
     log_return = signed_log(numeric_df) - signed_log(numeric_df.shift(1))
     
     # 根据处理类型进行处理
